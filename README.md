@@ -7,5 +7,5 @@
     - Get your 'Authorization' token from the headers (e.g: Ubi_v1 t=ey...)
 4. Replace gained information in server.js file.
 
-Source: https://www.reddit.com/r/thedivision/comments/4bxf55/the_division_api/
+Source: https://www.reddit.com/r/thedivision/comments/4bxf55/the_division_api/ <br>
 Credit: /u/M3talstorm
