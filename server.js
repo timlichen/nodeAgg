@@ -13,12 +13,16 @@ http.createServer(function(request, response) {
     } else {
 
     var options = {
-      url: 'https://uplaywebcenter.ubi.com/v1/stats/playerStats/?game=TCTD&locale=en-GB&platform=PC&userId=d2880d3a-3f57-4a45-8a29-37682e0f0cd5',
+
+      //REPLACE nameOnPlatform with Uplay Name.
+      url: 'https://api-ubiservices.ubi.com/v2/profiles?nameOnPlatform=M3t4lst0rm&platformType=uplay',
 
       // https://uplaywebcenter.ubi.com/v1/stats/playerStats/?game=TCTD&locale=en-GB&platform=PC&userId=d2880d3a-3f57-4a45-8a29-37682e0f0cd5
 
       headers: {
         'Ubi-AppId': '314d4fef-e568-454a-ae06-43e3bece12a6',
+
+        // REPLACE #'s with your 'Authorization' token from the headers (e.g: Ubi_v1 t=ey...)'
         'Authorization': '#######'
       }
     }
@@ -34,11 +38,5 @@ http.createServer(function(request, response) {
     response.write(JSON.stringify(requestBody));
 
     response.end();
-
-    // Note: the 2 lines above could be replaced with this next one:
-    // response.end(JSON.stringify(responseBody))
-
-    // END OF NEW STUFF
-  // });
   }
 }).listen(8000);
