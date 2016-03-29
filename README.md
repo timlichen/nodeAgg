@@ -1,5 +1,7 @@
 # theDivisionStatTracking
 
+##Barebone's HTTP request from nodeJS server to access The Divsion player stats and profile information.
+
 1. Go to: https://club.ubi.com/#!/en-GB/
 2. Login
 3. Look at xhr requests (chrome development console/fiddler/etc): http://i.imgur.com/1bEmQaF.png
