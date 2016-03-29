@@ -14,9 +14,12 @@ http.createServer(function(request, response) {
 
     var options = {
       url: 'https://uplaywebcenter.ubi.com/v1/stats/playerStats/?game=TCTD&locale=en-GB&platform=PC&userId=d2880d3a-3f57-4a45-8a29-37682e0f0cd5',
+
+      // https://uplaywebcenter.ubi.com/v1/stats/playerStats/?game=TCTD&locale=en-GB&platform=PC&userId=d2880d3a-3f57-4a45-8a29-37682e0f0cd5
+
       headers: {
-        'Ubi-AppId': '#######',
-        'Authorization': '######'
+        'Ubi-AppId': '314d4fef-e568-454a-ae06-43e3bece12a6',
+        'Authorization': '#######'
       }
     }
 
@@ -26,9 +29,10 @@ http.createServer(function(request, response) {
         console.log(stats);
       }
     }
-
     var requestBody = requestNPM(options, callback);
+    var responseWrite = requestNPM(options, callback).pipe(fs.createWriteStream('index.html'));
     response.write(JSON.stringify(requestBody));
+
     response.end();
 
     // Note: the 2 lines above could be replaced with this next one:
