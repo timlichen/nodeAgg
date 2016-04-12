@@ -1,6 +1,6 @@
 // var mongoose = require('mongoose');
 // require('./server/config/mongoose.js');
-var blob = mongoose.model('Aggregator');
+// var blob = mongoose.model('Aggregator');
 var http = require('http');
 var requestNPM = require('request');
 var fs = require('fs');
