@@ -1,3 +1,6 @@
+// var mongoose = require('mongoose');
+// require('./server/config/mongoose.js');
+var blob = mongoose.model('Aggregator');
 var http = require('http');
 var requestNPM = require('request');
 var fs = require('fs');
@@ -12,31 +15,66 @@ http.createServer(function(request, response) {
       })
     } else {
 
-    var options = {
+    var googleJSON = {
+      url: 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&q=http://www.google.com/trends/hottrends/atom/feed?pn=p1'
+    };
 
-      //REPLACE nameOnPlatform with Uplay Name.
-      url: 'https://api-ubiservices.ubi.com/v2/profiles?nameOnPlatform=M3t4lst0rm&platformType=uplay',
-
-      // https://uplaywebcenter.ubi.com/v1/stats/playerStats/?game=TCTD&locale=en-GB&platform=PC&userId=d2880d3a-3f57-4a45-8a29-37682e0f0cd5
-
-      headers: {
-        'Ubi-AppId': '314d4fef-e568-454a-ae06-43e3bece12a6',
-
-        // REPLACE #'s with your 'Authorization' token from the headers (e.g: Ubi_v1 t=ey...)'
-        'Authorization': '#######'
-      }
+    var redditJSON = {
+      url: 'https://www.reddit.com/r/all/.json?limit=5'
     }
 
-    function callback(error, response, body){
+    var Rcontent;
+    var Gcontent;
+    var jsonData;
+
+
+    function writeData(){
+     function callback(error, response, body){
       if(!error && response.statusCode == 200){
         var stats = body;
-        console.log(stats);
+        }
       }
-    }
-    var requestBody = requestNPM(options, callback);
-    var responseWrite = requestNPM(options, callback).pipe(fs.createWriteStream('index.html'));
-    response.write(JSON.stringify(requestBody));
+      var responseWrite = requestNPM(redditJSON, callback).pipe(fs.createWriteStream('redditRes.html'));
+      var responseWrite = requestNPM(googleJSON, callback).pipe(fs.createWriteStream('googleRes.html'));
+      }
 
-    response.end();
+    writeData();
+
+    function readRedditData(){
+      fs.readFile('redditRes.html', 'UTF-8', function(error, data){
+        if(error){
+          console.log(error);
+        }
+        Rcontent = data;
+      });
+    }
+
+    function readGoogleData(){
+      fs.readFile('googleRes.html', 'UTF-8', function(error, data){
+        if(error){
+          console.log(error);
+        }
+          Gcontent = data;
+        });
+      }
+
+  var interval = setInterval(function(){
+    console.log("Attempting to read.");
+    console.log(Gcontent);
+    readRedditData();
+    readGoogleData();
+
+    if((Rcontent != undefined) && (Rcontent != "") && (Gcontent != undefined) && (Gcontent != "")){
+      var gContJson = JSON.parse(Gcontent);
+      var rContJson = JSON.parse(Rcontent);
+      jsonData = {'topGoogleSearches' : gContJson.responseData.feed.entries, 'topFiveReddit': rContJson.data.children};
+      response.write(JSON.stringify(jsonData))
+      response.end();
+      clearInterval(interval);
+    }
+  }, 5000);
+
+
+
   }
 }).listen(8000);
