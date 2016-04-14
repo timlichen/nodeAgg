@@ -5,7 +5,9 @@ var http = require('http');
 var requestNPM = require('request');
 var fs = require('fs');
 
-http.createServer(function(request, response) {
+var jsonData;
+
+var server = http.createServer(function(request, response) {
 
     if(request.url === '/index'){
       fs.readFile('index.html', 'utf8', function(errors, contents){
@@ -13,7 +15,10 @@ http.createServer(function(request, response) {
         response.write(contents);  //  send response body
         response.end(); // finished!
       })
-    } else {
+
+    // } else {
+
+    function setData(){
 
     var googleJSON = {
       url: 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&q=http://www.google.com/trends/hottrends/atom/feed?pn=p1'
@@ -25,8 +30,6 @@ http.createServer(function(request, response) {
 
     var Rcontent;
     var Gcontent;
-    var jsonData;
-
 
     function writeData(){
      function callback(error, response, body){
@@ -60,21 +63,54 @@ http.createServer(function(request, response) {
 
   var interval = setInterval(function(){
     console.log("Attempting to read.");
-    console.log(Gcontent);
+    // console.log(Gcontent);
     readRedditData();
     readGoogleData();
 
     if((Rcontent != undefined) && (Rcontent != "") && (Gcontent != undefined) && (Gcontent != "")){
-      var gContJson = JSON.parse(Gcontent);
-      var rContJson = JSON.parse(Rcontent);
-      jsonData = {'topGoogleSearches' : gContJson.responseData.feed.entries, 'topFiveReddit': rContJson.data.children};
-      response.write(JSON.stringify(jsonData))
-      response.end();
-      clearInterval(interval);
-    }
-  }, 5000);
+        var gContJson = JSON.parse(Gcontent);
+        var rContJson = JSON.parse(Rcontent);
+        jsonData = {'topGoogleSearches' : gContJson.responseData.feed.entries, 'topFiveReddit': rContJson.data.children};
+
+        // response.write(JSON.stringify(jsonData));
+
+        io.sockets.on('connection', function(socket){
+          console.log('Socket ON');
+          console.log(socket.id);
+        });
+
+        var emitData = function(){
+          console.log('emitting');
+          io.emit('SEND_data', jsonData);
+        };
+
+        emitData();
+        clearInterval(interval);
+      }
+    }, 5000);
+};
+
+
+
+var MasterTimer = setInterval(function(){
+  console.log('Master Timer');
+  setData();
+  // clearInterval(MasterTimer);
+}, 20000)
 
 
 
   }
+
 }).listen(process.env.PORT || 8000);
+
+var io = require('socket.io').listen(server);
+
+var emitLoad = function(){
+  console.log('Loading');
+  io.emit('LOAD_data', {'LOADING' : 'DATA IS LOADING'});
+};
+
+emitLoad();
+
+

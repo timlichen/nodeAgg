@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "http": "0.0.0",
-    "request": "^2.69.0"
+    "request": "^2.69.0",
+    "socket.io": "^1.4.5"
   }
 }

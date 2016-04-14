@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Agg View</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type ="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type ="text/javascript">
+        $(document).ready(function (){
+            var socket = io.connect();
+            socket.on('SEND_data', function(data){
+              var gList = "";
+              var rList = "";
+              for(var i = 0; i < data.topGoogleSearches.length; i++){
+                console.log(data.topGoogleSearches[i].title);
+                gList += '<li>' + data.topGoogleSearches[i].title + '</li>';
+              }
+              for(var j = 0; j < data.topFiveReddit.length; j++){
+                console.log(data.topFiveReddit[j].data.title);
+                rList += '<li>' + data.topFiveReddit[j].data.title + '</li>'
+              }
+              $('#lol').html(gList)
+              $('#lol2').html(rList)
+            })
+            socket.on('LOAD_data', function(data){
+              console.log(data);
+            })
+        })
+    </script>
+</head>
+<body>
+  <div>
+    <ul id='lol'></ul>
+    <ul id='lol2'></ul>
+  </div>
+</body>
+</html>
